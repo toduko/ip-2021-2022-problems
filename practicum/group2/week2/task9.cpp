@@ -5,28 +5,9 @@
 */
 
 #include <iostream>
+#include <cmath>
 
 using namespace std;
-
-double absolute(double num) { return (num > 0 ? num : -num); }
-
-#define TOLERANCE 0.00001
-double sqrt(double number)
-{
-  double x = number;
-  double root;
-
-  while (1)
-  {
-    root = 0.5 * (x + (number / x));
-    if (absolute(root - x) < TOLERANCE)
-      break;
-
-    x = root;
-  }
-
-  return root;
-}
 
 void solution()
 {

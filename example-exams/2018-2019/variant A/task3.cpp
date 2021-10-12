@@ -13,6 +13,7 @@
 Упътване: Потенциалната енергия Ep = mgh, а кинетичната енергия Ek = (mv^2) / 2, където m е масата на тялото, g ≈ 9.8 m/s^2 е земното ускорение, h е разстоянието на тялото до Земята, а v е неговата скорост.
 */
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -40,31 +41,6 @@ void printBodies(Body bodies[], unsigned n)
     cout << "bodies[" << i << "] = ";
     printBody(bodies[i]);
   }
-}
-
-#define PRECISION 0.00001
-
-double absolute(double num)
-{
-  return num >= 0 ? num : -num;
-}
-
-double sqrt(double num)
-{
-  double x = num;
-  double root;
-
-  while (true)
-  {
-    root = 0.5 * (x + (num / x));
-
-    if (absolute(root - x) < PRECISION)
-      break;
-
-    x = root;
-  }
-
-  return root;
 }
 
 #define g 9.8
@@ -120,7 +96,7 @@ void enterData(Body bodies[], unsigned n)
     cin >> bodies[i].mass;
     cout << "Velocity: ";
     cin >> bodies[i].vel;
-    cout << "Description (<=20 characters):";
+    cout << "Description (<=20 characters): ";
     cin >> bodies[i].desc;
   }
 }
