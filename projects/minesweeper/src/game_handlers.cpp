@@ -97,6 +97,22 @@ void Game::handle_keypress(sf::Event event)
     }
 }
 
+void Game::handle_mouse()
+{
+    if (!is_game_over())
+    {
+        sf::Vector2i pos = sf::Mouse::getPosition(this->window);
+        pos.x /= IMAGE_SIZE;
+        pos.y /= IMAGE_SIZE;
+
+        if (is_valid(pos.x, pos.y))
+        {
+            this->handle_l_click(pos.x, pos.y);
+            this->handle_r_click(pos.x, pos.y);
+        }
+    }
+}
+
 void Game::handle_events()
 {
     sf::Event event;
@@ -108,18 +124,6 @@ void Game::handle_events()
         }
 
         this->handle_keypress(event);
-
-        if (!is_game_over())
-        {
-            sf::Vector2i pos = sf::Mouse::getPosition(this->window);
-            pos.x /= IMAGE_SIZE;
-            pos.y /= IMAGE_SIZE;
-
-            if (is_valid(pos.x, pos.y))
-            {
-                this->handle_l_click(pos.x, pos.y);
-                this->handle_r_click(pos.x, pos.y);
-            }
-        }
+        this->handle_mouse();
     }
 }
