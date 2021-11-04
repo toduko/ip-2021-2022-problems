@@ -18,13 +18,10 @@ void Game::handle_reveal(unsigned int x, unsigned int y)
         }
         else
         {
-            if (!is_marked(this->board[x][y]))
+            if ((!is_marked(this->board[x][y])) && (is_mine(this->board[x][y])))
             {
-                if (is_mine(this->board[x][y]))
-                {
-                    std::cout << "Game over you lose.\n";
-                    set_game_over();
-                }
+                std::cout << "Game over you lose.\n";
+                set_game_over();
             }
         }
 
