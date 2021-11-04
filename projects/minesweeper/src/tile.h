@@ -24,6 +24,8 @@
 
 #define is_empty(value) (get_value(value) == EMPTY)
 
+#define is_valid(x, y) (x >= 0 && x < NUM_TILES && y >= 0 && y < NUM_TILES)
+
 typedef uint8_t Tile;
 
 #endif

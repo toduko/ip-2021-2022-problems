@@ -97,8 +97,11 @@ void Game::handle_events()
             pos.x /= IMAGE_SIZE;
             pos.y /= IMAGE_SIZE;
 
-            this->handle_l_click(pos.x, pos.y);
-            this->handle_r_click(pos.x, pos.y);
+            if (is_valid(pos.x, pos.y))
+            {
+                this->handle_l_click(pos.x, pos.y);
+                this->handle_r_click(pos.x, pos.y);
+            }
         }
     }
 }

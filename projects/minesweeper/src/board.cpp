@@ -3,8 +3,6 @@
 #include <time.h>
 #include <set>
 
-#define is_valid(x, y) (x >= 0 && x < NUM_TILES && y >= 0 && y < NUM_TILES)
-
 void clear_board(Tile board[NUM_TILES][NUM_TILES])
 {
     for (int row = 0; row < NUM_TILES; ++row)
