@@ -15,6 +15,7 @@ private:
     void handle_events();
     void handle_reveal(unsigned int x, unsigned int y);
     void draw_cell(unsigned int x, unsigned int y);
+    void handle_keypress(sf::Event event);
     void handle_l_click(unsigned int x, unsigned int y);
     void handle_r_click(unsigned int x, unsigned int y);
     void draw_board();

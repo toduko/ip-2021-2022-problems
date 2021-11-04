@@ -81,6 +81,22 @@ void Game::handle_r_click(unsigned int x, unsigned int y)
     }
 }
 
+void Game::handle_keypress(sf::Event event)
+{
+    if (event.type == sf::Event::KeyPressed)
+    {
+        if (event.key.code == sf::Keyboard::R)
+        {
+            if (has_game_started())
+            {
+                unset_game_over();
+                unset_game_started();
+                this->setup();
+            }
+        }
+    }
+}
+
 void Game::handle_events()
 {
     sf::Event event;
@@ -90,6 +106,8 @@ void Game::handle_events()
         {
             this->window.close();
         }
+
+        this->handle_keypress(event);
 
         if (!is_game_over())
         {
