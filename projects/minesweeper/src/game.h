@@ -12,7 +12,7 @@ public:
     void loop();
 
 private:
-    void handle_events();
+    void handle_events(sf::Event event);
     void handle_reveal(unsigned int x, unsigned int y);
     void draw_cell(unsigned int x, unsigned int y);
     void handle_keypress(sf::Event event);

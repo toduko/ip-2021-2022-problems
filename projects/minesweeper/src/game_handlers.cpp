@@ -110,17 +110,13 @@ void Game::handle_mouse()
     }
 }
 
-void Game::handle_events()
+void Game::handle_events(sf::Event event)
 {
-    sf::Event event;
-    while (this->window.pollEvent(event))
+    if (event.type == sf::Event::Closed)
     {
-        if (event.type == sf::Event::Closed)
-        {
-            this->window.close();
-        }
-
-        this->handle_keypress(event);
-        this->handle_mouse();
+        this->window.close();
     }
+
+    this->handle_keypress(event);
+    this->handle_mouse();
 }
