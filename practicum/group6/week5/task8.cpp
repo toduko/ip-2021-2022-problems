@@ -6,28 +6,18 @@
 
 using namespace std;
 
-int sum_of_digits(int num)
-{
+bool sum_equals_product(int num) {
   int sum = 0;
+  int product = 1;
+
   while (num)
   {
     sum += num % 10;
-    num /= 10;
-  }
-
-  return sum;
-}
-
-int product_of_digits(int num)
-{
-  int product = 1;
-  while (num)
-  {
     product *= num % 10;
     num /= 10;
   }
 
-  return product;
+  return sum == product;
 }
 
 void swap_ints(unsigned int a, unsigned int b)
@@ -41,7 +31,7 @@ void find_nums(unsigned int start, unsigned int end)
 {
   while (start <= end)
   {
-    if (sum_of_digits(start) == product_of_digits(start))
+    if (sum_equals_product(start))
     {
       cout << start << endl;
     }
