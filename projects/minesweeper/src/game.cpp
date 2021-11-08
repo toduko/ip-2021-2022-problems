@@ -3,9 +3,14 @@
 void Game::setup()
 {
     this->window.create(sf::VideoMode(NUM_TILES * IMAGE_SIZE, NUM_TILES * IMAGE_SIZE), "Minesweeper", sf::Style::Titlebar | sf::Style::Close);
-    this->window.setFramerateLimit(0);
-
+    this->window.setFramerateLimit(30);
     clear_board(this->board);
+}
+
+void Game::init()
+{
+    
+    
 }
 
 void Game::draw()
@@ -20,10 +25,10 @@ void Game::loop()
     while (this->window.isOpen())
     {
         sf::Event event;
-        while (this->window.waitEvent(event))
+        while (this->window.pollEvent(event))
         {
             this->handle_events(event);
-            this->draw();
         }
+        this->draw();
     }
 }

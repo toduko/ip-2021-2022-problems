@@ -8,9 +8,6 @@ void Game::handle_reveal(unsigned int x, unsigned int y)
 {
     if (is_hidden(this->board[x][y]))
     {
-        show(this->board[x][y]);
-        ++count_discovered;
-
         if (!has_game_started())
         {
             set_game_started();
@@ -24,6 +21,9 @@ void Game::handle_reveal(unsigned int x, unsigned int y)
                 set_game_over();
             }
         }
+
+        show(this->board[x][y]);
+        ++count_discovered;
 
         if (is_empty(this->board[x][y]))
         {
@@ -40,14 +40,11 @@ void Game::handle_reveal(unsigned int x, unsigned int y)
 
 void Game::handle_l_click(unsigned int x, unsigned int y)
 {
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !is_l_pressed())
     {
-        if (!is_l_pressed())
-        {
-            set_l_pressed();
+        set_l_pressed();
 
-            this->handle_reveal(x, y);
-        }
+        this->handle_reveal(x, y);
     }
     else
     {
@@ -57,19 +54,13 @@ void Game::handle_l_click(unsigned int x, unsigned int y)
 
 void Game::handle_r_click(unsigned int x, unsigned int y)
 {
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && has_game_started() && !is_r_pressed())
     {
-        if (has_game_started())
-        {
-            if (!is_r_pressed())
-            {
-                set_r_pressed();
+        set_r_pressed();
 
-                if (is_hidden(this->board[x][y]))
-                {
-                    toggle_marked(this->board[x][y]);
-                }
-            }
+        if (is_hidden(this->board[x][y]))
+        {
+            toggle_marked(this->board[x][y]);
         }
     }
     else
@@ -88,7 +79,7 @@ void Game::handle_keypress(sf::Event event)
             {
                 unset_game_over();
                 unset_game_started();
-                this->setup();
+                clear_board(this->board);
             }
         }
     }
