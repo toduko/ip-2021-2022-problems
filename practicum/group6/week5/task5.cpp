@@ -8,19 +8,14 @@
 
 using namespace std;
 
-unsigned int nth_bit(unsigned char bit)
-{
-  return pow(2, bit);
-}
-
 void set_bit(unsigned short int &num, unsigned char bit)
 {
-  num |= nth_bit(bit);
+  num |= 1 << bit;
 }
 
 unsigned int get_bit(unsigned short int num, unsigned char bit)
 {
-  return (num & nth_bit(bit));
+  return (num & (1 << bit));
 }
 
 bool has_repeating_digits(int num)
