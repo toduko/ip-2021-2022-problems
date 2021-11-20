@@ -8,34 +8,14 @@ using namespace std;
 #define EPSILON 0.0001
 #define PI 3.14159265
 
-double absolute(double a)
-{
-  return (a >= 0 ? a : -a);
-}
-
-bool are_equal(double a, double b)
-{
-  return absolute(a - b) < EPSILON;
-}
-
 bool is_less(double a, double b)
 {
   return ((a - b) < -EPSILON);
 }
 
-bool less_or_equals(double a, double b)
-{
-  return (are_equal(a, b) || is_less(a, b));
-}
-
 bool is_greater(double a, double b)
 {
   return ((a - b) > EPSILON);
-}
-
-bool greater_or_equals(double a, double b)
-{
-  return (are_equal(a, b) || is_greater(a, b));
 }
 
 bool is_between(double a, double lower_bound, double upper_bound)
@@ -51,14 +31,6 @@ double euclidian_distance(double x1, double y1, double x2, double y2)
 bool is_in_square(double x, double y, double square_x_min, double square_y_min, double square_x_max, double square_y_max)
 {
   return (is_between(x, square_x_min, square_x_max) && is_between(y, square_y_min, square_y_max));
-}
-
-double sine_of_point(double x, double y)
-{
-  double hypotenuse = euclidian_distance(x, y, 0, 0);
-  double cathetus = y;
-
-  return cathetus / hypotenuse;
 }
 
 void task_0()
