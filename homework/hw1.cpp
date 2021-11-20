@@ -155,10 +155,106 @@ void task_1()
   cout << "f_35(x) = " << x << endl;
 }
 
+#define TYPE_NULL 0
+#define TYPE_BLUEBERRY 1
+#define TYPE_PEACH 2
+#define TYPE_ROSE_HIP 3
+
+bool is_digit(char c)
+{
+  return ((c >= '0') && (c <= '9'));
+}
+
+unsigned char read_batch_and_get_type()
+{
+  char buffer;
+  unsigned short int type_code = 0;
+
+  for (int i = 0; i < 3; ++i)
+  {
+    cin >> buffer;
+    if (!is_digit(buffer)) // only check first 3 digits for type
+    {
+      return TYPE_NULL;
+    }
+  }
+
+  for (int i = 0; i < 4; ++i)
+  {
+    cin >> buffer;
+    if (is_digit(buffer))
+    {
+      type_code = (type_code * 10) + (buffer - 48);
+    }
+    else
+    {
+      return TYPE_NULL;
+    }
+  }
+
+  cin >> buffer;
+  if (!is_digit(buffer)) // only check last digit for type
+  {
+    return TYPE_NULL;
+  }
+
+  if (type_code % 7 == 0)
+  {
+    return TYPE_BLUEBERRY;
+  }
+  else if (type_code % 13 == 0)
+  {
+    return TYPE_PEACH;
+  }
+  else if (type_code % 17 == 0)
+  {
+    return TYPE_ROSE_HIP;
+  }
+  else
+  {
+    return TYPE_NULL;
+  }
+}
+
+void read_positive_n(int &n)
+{
+  do
+  {
+    cin >> n;
+  } while (n < 1);
+}
+
+void task_2()
+{
+  int n, blueberry_count = 0, peach_count = 0, rose_hip_count = 0;
+  read_positive_n(n);
+
+  const int NUM_CODES = n / 8;
+  const int INVALID_LETTERS = n % 8;
+
+  for (int i = 0; i < NUM_CODES; ++i)
+  {
+    const unsigned char type = read_batch_and_get_type();
+    blueberry_count += (type == TYPE_BLUEBERRY);
+    peach_count += (type == TYPE_PEACH);
+    rose_hip_count += (type == TYPE_ROSE_HIP);
+  }
+  for (int i = 0; i < INVALID_LETTERS; ++i)
+  {
+    char a;
+    cin >> a;
+  }
+
+  cout << "Blueberry jam: " << blueberry_count << endl;
+  cout << "Peach jam: " << peach_count << endl;
+  cout << "Rose hip jam: " << rose_hip_count << endl;
+}
+
 int main()
 {
   // task_0();
-  task_1();
+  // task_1();
+  task_2();
 
   return 0;
 }
