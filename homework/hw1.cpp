@@ -135,9 +135,30 @@ void task_0()
   }
 }
 
+void task_1()
+{
+  int x;
+  cin >> x;
+
+  for (int i = 2; i <= 35; ++i)
+  {
+    if (x & 1)
+    {
+      x = 3 * x + 1;
+    }
+    else
+    {
+      x /= 2;
+    }
+  }
+
+  cout << "f_35(x) = " << x << endl;
+}
+
 int main()
 {
-  task_0();
+  // task_0();
+  task_1();
 
   return 0;
 }
