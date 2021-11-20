@@ -250,11 +250,46 @@ void task_2()
   cout << "Rose hip jam: " << rose_hip_count << endl;
 }
 
+bool is_interesting(int num)
+{
+  while (num / 10)
+  {
+    if (!((num % 10) & 1) ^ (((num / 10) % 10) & 1))
+    {
+      return false;
+    }
+    num /= 10;
+  }
+
+  return true;
+}
+
+void task_3()
+{
+  int a, b, interesting_sum = 0;
+  cin >> a >> b;
+
+  if (a > b) // swap
+  {
+    a ^= b;
+    b ^= a;
+    a ^= b;
+  }
+
+  for (int i = a; i <= b; ++i)
+  {
+    interesting_sum += (is_interesting(i) ? i : 0);
+  }
+
+  cout << interesting_sum << endl;
+}
+
 int main()
 {
   // task_0();
   // task_1();
-  task_2();
+  // task_2();
+  task_3();
 
   return 0;
 }
