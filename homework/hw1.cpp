@@ -284,12 +284,142 @@ void task_3()
   cout << interesting_sum << endl;
 }
 
+bool has_repeating_digits(int num)
+{
+  unsigned short int flags;
+
+  while (num)
+  {
+    int l_digit = num % 10;
+
+    if (!(flags & (1 << l_digit)))
+    {
+      flags |= 1 << l_digit;
+    }
+    else
+    {
+      return true;
+    }
+
+    num /= 10;
+  }
+
+  return false;
+}
+
+void read_4_digit_num(unsigned int &num, bool should_be_unique)
+{
+  do
+  {
+    if (should_be_unique)
+    {
+      cout << "Enter secret number (must be unique and 4 digits): ";
+    }
+    else
+    {
+      cout << "Enter guess (must be 4 digits): ";
+    }
+    cin >> num;
+  } while (((num < 1000) || (num > 9999)) || (should_be_unique && has_repeating_digits(num)));
+}
+
+unsigned int get_bulls(unsigned int guess, unsigned int answer)
+{
+  unsigned int bulls = 0;
+  while (guess)
+  {
+    bulls += ((guess % 10) == (answer % 10));
+
+    guess /= 10;
+    answer /= 10;
+  }
+
+  return bulls;
+}
+
+bool contains_digit(unsigned int num, unsigned int digit)
+{
+  while (num)
+  {
+    if ((num % 10) == digit)
+    {
+      return true;
+    }
+
+    num /= 10;
+  }
+
+  return false;
+}
+
+unsigned int get_cows(unsigned int guess, unsigned int answer, unsigned int bulls)
+{
+  unsigned int cows = 0;
+  while (guess)
+  {
+    cows += contains_digit(answer, guess % 10);
+
+    guess /= 10;
+  }
+
+  cows -= bulls;
+
+  return cows;
+}
+
+bool make_guess(unsigned int &guess, unsigned int answer) // returns true if number is guessed correctly
+{
+  read_4_digit_num(guess, false);
+
+  if (guess == answer)
+  {
+    return true;
+  }
+
+  unsigned int bulls = get_bulls(guess, answer);
+  unsigned int cows = get_cows(guess, answer, bulls);
+
+  cout << bulls << " bulls\n";
+  cout << cows << " cows\n";
+
+  return false;
+}
+
+#define NUM_TRIES 4
+
+void task_4()
+{
+  unsigned int num_to_guess, guess;
+  read_4_digit_num(num_to_guess, true);
+
+  cout << "You have " << NUM_TRIES << " tries.\n";
+
+  for (int i = 0; i <= NUM_TRIES; ++i)
+  {
+    if (i == NUM_TRIES)
+    {
+      cout << "Game over!\n";
+      break;
+    }
+    if (make_guess(guess, num_to_guess))
+    {
+      cout << "You won!\n";
+      break;
+    }
+    else
+    {
+      cout << NUM_TRIES - i - 1 << " tries left.\n";
+    }
+  }
+}
+
 int main()
 {
   // task_0();
   // task_1();
   // task_2();
-  task_3();
+  // task_3();
+  task_4();
 
   return 0;
 }
