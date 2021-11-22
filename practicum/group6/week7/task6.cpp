@@ -24,7 +24,7 @@ char get_symbol(const int num)
 
 void convert_base_n(int num, const int base, char result[], const int n)
 {
-  if (base > 61)
+  if (base > 62)
   {
     cout << "Base too big.\n";
   }
