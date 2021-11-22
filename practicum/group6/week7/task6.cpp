@@ -22,11 +22,28 @@ char get_symbol(const int num)
   }
 }
 
+void clear_arr(char arr[], int n)
+{
+  for (int i = 0; i < n; ++i)
+  {
+    arr[i] = 0;
+  }
+}
+
 void convert_base_n(int num, const int base, char result[], const int n)
 {
+  clear_arr(result, n);
+
   if (base > 62)
   {
     cout << "Base too big.\n";
+  }
+  else if (base == 1)
+  {
+    for (int i = n - 1; i >= 0; --i)
+    {
+      result[i] = '1';
+    }
   }
   else
   {
@@ -37,7 +54,7 @@ void convert_base_n(int num, const int base, char result[], const int n)
   }
 }
 
-#define RESULT_SIZE 10
+#define RESULT_SIZE 64
 
 void solution()
 {
