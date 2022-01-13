@@ -30,109 +30,154 @@ void char_swap(char &a, char &b)
   b = temp;
 }
 
-void correct_punctuation(const char *text, const unsigned int text_size, char *corrected_text)
+const unsigned int MAX_CORRECTED_TEXT_SIZE = 2048;
+
+void correct_punctuation(char text[MAX_CORRECTED_TEXT_SIZE], const unsigned int size)
 {
   bool is_open_bracket = false;
+  bool has_written_space = false;
+  bool has_written_dot = false;
+  char new_text[MAX_CORRECTED_TEXT_SIZE] = {0};
 
-  for (int i = 0, j = 0; i < text_size; ++i)
+  for (int i = 0, j = 0; (i < size) && (j < size); ++i)
   {
-    if (is_digit(text[i]) || is_letter(text[i]) || text[i] == ' ')
+    new_text[j++] = text[i];
+    if (j >= size)
     {
-      corrected_text[j++] = text[i];
+      break;
     }
-    else
+    if (text[i] == '.' && (j > 1) && new_text[j - 2] == '"')
     {
-      bool does_not_have_interval_before = (i > 0) && (text[i - 1] != ' ');
-      bool does_not_have_interval_after = (i < text_size - 1) && (text[i + 1] != ' ') && (text[i + 1] != '\n');
-
-      if (text[i] == '"')
+      char_swap(new_text[j - 2], new_text[j - 1]);
+      if (++j >= size)
       {
-        is_open_bracket ^= true;
-        if (is_open_bracket && does_not_have_interval_before && ((j > 0) && corrected_text[j - 1] != ' '))
-        {
-          corrected_text[j++] = ' ';
-        }
-        corrected_text[j++] = text[i];
+        break;
+      }
+    }
+
+    if ((text[i] == '\n') && ((i > 0) && (text[i - 1]) != '.'))
+    {
+      new_text[j] = '.';
+      if (new_text[j - 1] == '"')
+      {
+        char_swap(new_text[j - 1], new_text[j++]);
+      }
+      if (j >= size)
+      {
+        break;
+      }
+    }
+
+    if (text[i + 1] == 0 && (text[i] != '.'))
+    {
+
+      new_text[j] = '.';
+      if (new_text[j - 1] == '"')
+      {
+        char_swap(new_text[j - 1], new_text[j]);
+      }
+
+      break;
+    }
+  }
+
+  for (int i = 0, j = 0; (i < size) && (j < size); ++i)
+  {
+    bool is_bracket = text[i] == '"';
+    bool does_not_have_interval_before = (i > 0) && (new_text[i - 1] != ' ');
+    bool does_not_have_interval_after = (i < size - 1) && (new_text[i + 1] != ' ');
+    is_open_bracket ^= is_bracket;
+
+    if ((should_have_interval_before(new_text[i]) || (is_bracket && is_open_bracket)) && does_not_have_interval_before)
+    {
+      if (!has_written_space)
+      {
+        text[j++] = ' ';
       }
       else
       {
-        if (does_not_have_interval_before && should_have_interval_before(text[i]))
-        {
-          if (((j > 0) && corrected_text[j - 1] != ' '))
-          {
-            corrected_text[j++] = ' ';
-          }
-        }
-
-        corrected_text[j++] = text[i];
-
-        if (does_not_have_interval_after && should_have_interval_after(text[i]))
-        {
-          corrected_text[j++] = ' ';
-        }
+        has_written_space = false;
+      }
+      if (j >= size)
+      {
+        break;
       }
     }
 
-    if ((i == text_size - 1) && (text[i] != '.'))
+    text[j++] = new_text[i];
+    if (j >= size)
     {
-      if ((j > 0) && corrected_text[j - 1] != '.')
+      break;
+    }
+
+    if (should_have_interval_after(new_text[i]) && (is_bracket && !is_open_bracket) && does_not_have_interval_after)
+    {
+      if (i < size - 1)
       {
-        corrected_text[j] = '.';
+        text[j++] = ' ';
       }
-      if (j > 0 && corrected_text[j - 1] == '"' && !is_open_bracket)
+      has_written_space = true;
+      if (j >= size)
       {
-        char_swap(corrected_text[j - 1], corrected_text[j]);
+        break;
       }
-      ++j;
     }
   }
 }
 
-void correct_spelling(char *corrected_text, const unsigned int text_size, char **dict, const unsigned int dict_size)
+const unsigned int MAX_DICT_SIZE = 128;
+const unsigned int MAX_DICT_WORD_SIZE = 100;
+
+void correct_spelling(char *corrected_text, const unsigned int text_size, char dict[MAX_DICT_SIZE][MAX_DICT_WORD_SIZE], const unsigned int dict_size)
 {
   for (int i = 0; i < dict_size; ++i)
   {
     char *found, *to_find = dict[2 * i], *to_replace = dict[2 * i + 1];
-    const unsigned int to_find_length = strlen(to_find), to_replace_length = strlen(to_replace);
-    int n = 0;
-    while (found = strstr(corrected_text + n, to_find))
     {
-      n = found - corrected_text;
-      const int diff = to_find_length - to_replace_length;
-      if (diff < 0)
+      const unsigned int to_find_length = strlen(to_find), to_replace_length = strlen(to_replace);
+      int n = 0;
+      while ((found = strstr(corrected_text + n, to_find)))
       {
-        for (int j = text_size - 1; (j >= n + to_find_length); --j)
+        n = found - corrected_text;
+        if ((strstr(corrected_text + n, to_replace) != found))
         {
-          corrected_text[j - diff] = corrected_text[j];
+          const int diff = to_find_length - to_replace_length;
+          if (diff < 0)
+          {
+            for (int j = text_size - 1; (j >= n + to_find_length); --j)
+            {
+              corrected_text[j - diff] = corrected_text[j];
+            }
+            for (int j = n; (j - n) < to_replace_length; ++j)
+            {
+              corrected_text[j] = to_replace[j - n];
+            }
+          }
+          else
+          {
+            for (int j = n; ((j - n) < to_replace_length) && (j < text_size); ++j)
+            {
+              corrected_text[j] = to_replace[j - n];
+            }
+            for (int j = n + to_replace_length; (j < text_size - diff) && (corrected_text[j + diff] != 0); ++j)
+            {
+              corrected_text[j] = corrected_text[j + diff];
+            }
+          }
         }
-        for (int j = n; (j - n) < to_replace_length; ++j)
-        {
-          corrected_text[j] = to_replace[j - n];
-        }
+        n += to_find_length;
       }
-      else
-      {
-        for (int j = n; ((j - n) < to_replace_length) && (j < text_size); ++j)
-        {
-          corrected_text[j] = to_replace[j - n];
-        }
-        for (int j = n + to_replace_length; (j < text_size - diff) && (corrected_text[j + diff] != 0); ++j)
-        {
-          corrected_text[j] = corrected_text[j + diff];
-        }
-      }
-      n += to_find_length;
     }
   }
 }
 
-void autocorrect(const char *text, const unsigned int text_size, char **dict, const unsigned int dict_size)
+void autocorrect(const char *text, const unsigned int text_size, char dict[MAX_DICT_SIZE][MAX_DICT_WORD_SIZE], const unsigned int dict_size)
 {
-  const unsigned int MAX_CORRECTED_TEXT_SIZE = 2048;
   char corrected_text[MAX_CORRECTED_TEXT_SIZE] = {0};
 
-  correct_punctuation(text, text_size, corrected_text);
+  strncpy(corrected_text, text, text_size);
   correct_spelling(corrected_text, MAX_CORRECTED_TEXT_SIZE, dict, dict_size);
+  correct_punctuation(corrected_text, MAX_CORRECTED_TEXT_SIZE);
 
   for (int i = 0; corrected_text[i] != 0; ++i)
   {
@@ -141,29 +186,24 @@ void autocorrect(const char *text, const unsigned int text_size, char **dict, co
   cout << endl;
 }
 
-void dynamic__enter_text(char *&text, unsigned int &text_size)
-{
-  const unsigned int MAX_TEXT_SIZE = 1024;
+const unsigned int MAX_TEXT_SIZE = 1024;
 
+void enter_text(char *text, unsigned int &text_size)
+{
   cin >> text_size;
   if (text_size > MAX_TEXT_SIZE)
   {
     text_size = MAX_TEXT_SIZE;
   }
   cin.ignore();
-
-  text = new char[text_size];
   for (int i = 0; i < text_size; ++i)
   {
     cin.get(text[i]);
   }
 }
 
-void dynamic__enter_dict(char **&dict, unsigned int &dict_size)
+void enter_dict(char dict[MAX_DICT_SIZE][MAX_DICT_WORD_SIZE], unsigned int &dict_size)
 {
-  const unsigned int MAX_DICT_SIZE = 128;
-  const unsigned int MAX_DICT_WORD_SIZE = 100;
-
   cin >> dict_size;
   if (dict_size > MAX_DICT_SIZE)
   {
@@ -171,42 +211,24 @@ void dynamic__enter_dict(char **&dict, unsigned int &dict_size)
   }
   cin.ignore();
 
-  dict = new char *[2 * dict_size];
-
   for (int i = 0; i < dict_size; ++i)
   {
-    dict[2 * i] = new char[MAX_DICT_WORD_SIZE];
-    dict[2 * i + 1] = new char[MAX_DICT_SIZE];
     cin.getline(dict[2 * i], MAX_DICT_WORD_SIZE, '-');
     cin.getline(dict[2 * i + 1], MAX_DICT_WORD_SIZE);
   }
 }
 
-void free_mem(const char *text, char **dict, const unsigned int dict_size)
-{
-  delete[] text;
-
-  for (int i = 0; i < dict_size; ++i)
-  {
-    delete[] dict[i];
-  }
-
-  delete[] dict;
-}
-
 void task_0()
 {
-  char *text;
+  char text[MAX_TEXT_SIZE];
   unsigned int text_size = 0;
-  dynamic__enter_text(text, text_size);
+  enter_text(text, text_size);
 
-  char **dict;
+  char dict[MAX_DICT_SIZE][MAX_DICT_WORD_SIZE];
   unsigned int dict_size = 0;
-  dynamic__enter_dict(dict, dict_size);
+  enter_dict(dict, dict_size);
 
   autocorrect(text, text_size, dict, dict_size);
-
-  free_mem(text, dict, dict_size);
 }
 
 void dynamic__create_matrix(int **&matrix, const unsigned int n, const unsigned int m)
@@ -458,9 +480,9 @@ void task_2_prime()
 
 int main()
 {
-  // task_0();
+  task_0();
   // task_1();
-  task_2_prime();
+  // task_2_prime();
 
   return 0;
 }
