@@ -49,20 +49,20 @@ void correct_punctuation(char text[MAX_CORRECTED_TEXT_SIZE], const unsigned int 
     if (text[i] == '.' && (j > 1) && new_text[j - 2] == '"')
     {
       char_swap(new_text[j - 2], new_text[j - 1]);
-      if (++j >= size)
+      if (j >= size)
       {
         break;
       }
     }
-
     if ((text[i] == '\n') && ((i > 0) && (text[i - 1]) != '.'))
     {
-      new_text[j] = '.';
-      if (new_text[j - 1] == '"')
+      new_text[j - 1] = '.';
+      new_text[j] = '\n';
+      if (j > 0 && new_text[j - 1] == '"')
       {
-        char_swap(new_text[j - 1], new_text[j++]);
+        char_swap(new_text[j - 1], new_text[j]);
       }
-      if (j >= size)
+      if (++j >= size)
       {
         break;
       }
@@ -125,7 +125,7 @@ void correct_punctuation(char text[MAX_CORRECTED_TEXT_SIZE], const unsigned int 
   }
 }
 
-const unsigned int MAX_DICT_SIZE = 128;
+const unsigned int MAX_DICT_SIZE = 2 * 128;
 const unsigned int MAX_DICT_WORD_SIZE = 100;
 
 void correct_spelling(char *corrected_text, const unsigned int text_size, char dict[MAX_DICT_SIZE][MAX_DICT_WORD_SIZE], const unsigned int dict_size)
@@ -205,9 +205,9 @@ void enter_text(char *text, unsigned int &text_size)
 void enter_dict(char dict[MAX_DICT_SIZE][MAX_DICT_WORD_SIZE], unsigned int &dict_size)
 {
   cin >> dict_size;
-  if (dict_size > MAX_DICT_SIZE)
+  if (dict_size > MAX_DICT_SIZE / 2)
   {
-    dict_size = MAX_DICT_SIZE;
+    dict_size = MAX_DICT_SIZE / 2;
   }
   cin.ignore();
 
